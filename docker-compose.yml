@@ -8,7 +8,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U research -d research"]
+      test: [ "CMD-SHELL", "pg_isready -U research -d research" ]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -21,7 +21,7 @@ services:
     volumes:
       - redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 5s
       timeout: 3s
       retries: 20
@@ -32,7 +32,11 @@ services:
     build:
       context: ./backend
     env_file: .env
+    environment:
+      PYTHONPATH: /app
     command: alembic upgrade head
+    volumes:
+      - ./backend:/app
     depends_on:
       postgres:
         condition: service_healthy
@@ -41,6 +45,8 @@ services:
     build:
       context: ./backend
     env_file: .env
+    environment:
+      PYTHONPATH: /app
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     volumes:
       - ./backend:/app
@@ -56,6 +62,8 @@ services:
     build:
       context: ./backend
     env_file: .env
+    environment:
+      PYTHONPATH: /app
     command: celery -A app.worker.celery_app worker --loglevel=INFO --concurrency=2
     volumes:
       - ./backend:/app
@@ -82,7 +90,7 @@ services:
     volumes:
       - ./frontend:/app
     command: sh -c "npm install && npm run lint && npm run build"
-    profiles: ["tools"]
+    profiles: [ "tools" ]
 
 volumes:
   postgres_data:
