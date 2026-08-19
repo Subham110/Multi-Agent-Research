@@ -13,7 +13,7 @@ T = TypeVar("T", bound=BaseModel)
 
 
 def _retryable_gemini_error(exc: BaseException) -> bool:
-    if isinstance(exc, (ConnectionError, TimeoutError)):
+    if isinstance(exc, ConnectionError | TimeoutError):
         return True
     return isinstance(exc, errors.APIError) and getattr(exc, "code", 0) in {408, 429, 500, 502, 503, 504}
 
@@ -133,7 +133,7 @@ class GeminiService:
             return "[truncated]"
         if isinstance(value, str):
             return value[:2_000]
-        if isinstance(value, (int, float, bool)) or value is None:
+        if isinstance(value, int | float | bool) or value is None:
             return value
         if isinstance(value, list):
             return [GeminiService._sanitize_public_value(item, depth + 1) for item in value[:10]]
