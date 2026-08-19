@@ -1,3 +1,4 @@
+import contextlib
 import json
 import uuid
 from datetime import UTC
@@ -60,12 +61,8 @@ class EventPublisher:
             "payload": event.payload,
             "created_at": event.created_at.astimezone(UTC).isoformat(),
         }
-        try:
+        with contextlib.suppress(redis.RedisError):
             self.redis.publish(f"research:{self.job_id}", json.dumps(serialized))
-        except redis.RedisError:
-            # The event is already committed and will be replayed from PostgreSQL
-            # when the browser reconnects.
-            pass
         return serialized
 
     @staticmethod
@@ -74,11 +71,10 @@ class EventPublisher:
         client = redis.Redis.from_url(settings.REDIS_URL, decode_responses=True)
         key = f"research:{job_id}:sequence"
         try:
-            current = client.get(key)
-            if current is None or int(current) < value:
-                client.set(key, value)
-        except redis.RedisError:
-            pass
+            with contextlib.suppress(redis.RedisError):
+                current = client.get(key)
+                if current is None or int(current) < value:
+                    client.set(key, value)
         finally:
             client.close()
         return value
