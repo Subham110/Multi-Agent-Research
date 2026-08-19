@@ -152,7 +152,7 @@ Multi-agent reflection can improve evidence coverage and catch errors, but no ar
 - [API guide](docs/API.md)
 - [Validation report](VALIDATION.md)
 
-## Current technology references
+## Current technology references 
 
 - LangGraph overview and persistence: `https://docs.langchain.com/oss/python/langgraph/overview`
 - LangGraph streaming: `https://docs.langchain.com/oss/python/langgraph/streaming`
