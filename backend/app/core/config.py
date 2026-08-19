@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str = ""
     GEMINI_MODEL: str = "gemini-3.6-flash"
     GEMINI_EMBEDDING_MODEL: str = "gemini-embedding-2"
-    EMBEDDING_DIMENSION: Literal[768] = 768
+    EMBEDDING_DIMENSION: int = 768
 
     MAX_RESEARCH_SOURCES: int = Field(default=12, ge=3, le=30)
     MAX_PAPERS: int = Field(default=5, ge=0, le=10)
