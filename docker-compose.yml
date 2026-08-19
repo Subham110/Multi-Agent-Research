@@ -13,7 +13,7 @@ services:
       timeout: 5s
       retries: 20
     ports:
-      - "5432:5432"
+      - "5440:5440"
 
   redis:
     image: redis:7.4-alpine
